@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOUR AGENTS // LULA</title>
+<link rel="icon" type="image/png" href="/favicon.png?v=2">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0c; --bg-1:#101014; --bg-2:#16161c;
+    --line:#22222b; --line-2:#33333f; --dim:#6b6b78; --mid:#a1a1ad;
+    --grn:#ffffff; --grn-hot:#ffffff; --wht:#ffffff; --acc:#a855f7; --acc2:#22d3ee; --acc-dim:#5b3f8f;
+    --amb:#ffb347; --red:#ff5555; --cyan:#5affff;
+    --f:"JetBrains Mono",ui-monospace,"DejaVu Sans Mono",Menlo,Consolas,monospace;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--mid);font-family:var(--f);
+    font-size:13px;line-height:1.6;min-height:100vh;
+    background-image:radial-gradient(ellipse 90% 50% at 50% -10%, rgba(168,85,247,.05), transparent 65%);
+  }
+  ::selection{background:var(--grn);color:#000}
+  a{color:var(--grn);text-decoration:none}
+  a:hover{color:var(--grn-hot)}
+  .wrap{max-width:600px;margin:0 auto;padding:0 20px}
+
+  .top{border-bottom:1px solid var(--line);background:var(--bg-1)}
+  .top .wrap{display:flex;justify-content:space-between;align-items:center;height:42px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .top .tr{display:flex;align-items:center;gap:14px}
+  .wbtn{
+    background:transparent;border:1px solid var(--line-2);color:var(--dim);
+    font-family:inherit;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+    padding:5px 11px;cursor:pointer;transition:.15s;white-space:nowrap;
+  }
+  .wbtn:hover{border-color:var(--grn);color:var(--grn);background:var(--bg-2)}
+  .wbtn.on{border-color:var(--acc);color:var(--acc)}
+  .wbtn:disabled{opacity:.5;cursor:wait}
+  .top b{color:var(--grn);font-weight:400}
+
+  header{padding:44px 0 0}
+  .tag{display:inline-block;border:1px solid var(--line-2);color:var(--grn);padding:4px 11px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:16px}
+  h1{font-size:clamp(22px,4vw,30px);font-weight:700;color:var(--wht);letter-spacing:-.01em;text-shadow:0 0 24px rgba(255,255,255,.25)}
+  .lede{color:var(--dim);font-size:13px;margin-top:10px;line-height:1.7}
+
+  .err{color:var(--red);font-size:12px;margin-top:8px;display:none}
+  .err.on{display:block}
+
+  footer{border-top:1px solid var(--line);padding:22px 0 44px;font-size:10px;color:var(--line-2);letter-spacing:.1em;text-transform:uppercase;text-align:center}
+
+  /* ── the sign-in prompt, shown when no wallet is connected ──── */
+  .signin{
+    border:1px solid var(--line-2);background:var(--bg-1);
+    padding:26px 22px;margin:26px 0 60px;text-align:center;
+  }
+  .signin .st{color:var(--wht);font-size:14px;margin-bottom:10px}
+  .signin .sd{color:var(--dim);font-size:12px;line-height:1.8;margin-bottom:20px}
+  .signin .sbtn{
+    background:var(--grn);border:1px solid var(--grn);color:#000;
+    font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    padding:13px 26px;cursor:pointer;transition:.15s;
+  }
+  .signin .sbtn:hover{background:var(--grn-hot);border-color:var(--grn-hot)}
+  .signin .sbtn:disabled{opacity:.5;cursor:wait}
+  .signin .wsafe{
+    display:block;margin-top:16px;padding-top:14px;
+    border-top:1px solid var(--line);color:var(--line-2);font-size:10px;line-height:1.75;
+  }
+  .signin .wsafe b{color:var(--amb)}
+
+  /* wrapper around everything that needs a connected wallet */
+  .signed{display:none}
+  .signed.on{display:block}
+
+  /* ── credit ───────────────────────────────────────────────── */
+  .credit{border:1px solid var(--line-2);background:var(--bg-1);margin:26px 0 22px}
+  .ch{
+    display:flex;justify-content:space-between;padding:9px 14px;
+    background:var(--bg-2);border-bottom:1px solid var(--line);
+    font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  }
+  .ch .cn{color:var(--grn)}
+  .cb{padding:16px 14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .cbal{display:flex;flex-direction:column;gap:1px}
+  .cv{font-size:26px;color:var(--grn);line-height:1;text-shadow:0 0 14px rgba(255,255,255,.3)}
+  .cv.low{color:var(--amb);text-shadow:0 0 14px rgba(255,179,71,.3)}
+  .cv.zero{color:var(--line-2);text-shadow:none}
+  .cl{font-size:9px;color:var(--line-2);letter-spacing:.14em;text-transform:uppercase}
+  .cinfo{flex:1;min-width:150px;font-size:10px;color:var(--dim);line-height:1.7}
+  .cinfo b{color:var(--wht)}
+  .cbtn{
+    background:transparent;border:1px solid var(--grn);color:var(--grn);
+    font-family:inherit;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    padding:11px 18px;cursor:pointer;transition:.15s;white-space:nowrap;
+  }
+  .cbtn:hover{background:var(--grn);color:#000}
+  .cbtn:disabled{opacity:.4;cursor:not-allowed}
+  .cnote{
+    padding:10px 14px;font-size:10px;color:var(--line-2);
+    line-height:1.7;border-top:1px solid var(--line);
+  }
+  .cnote.warn{color:var(--amb)}
+
+  /* ── the roster: agents that have run here before ───────────── */
+  .roster{border:1px solid var(--line);background:var(--bg-1);margin-bottom:50px}
+  .rh{
+    display:flex;justify-content:space-between;padding:9px 14px;
+    background:var(--bg-2);border-bottom:1px solid var(--line);
+    font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  }
+  .rh .rn{color:var(--line-2)}
+  .ra{
+    display:flex;align-items:center;gap:12px;
+    padding:10px 14px;border-bottom:1px solid var(--line);
+  }
+  .ra:last-child{border-bottom:0}
+  .ra .rl{flex:1;min-width:0}
+  .ra .rname{color:var(--wht);font-size:12px}
+  .ra .rname .rnamelink{color:var(--wht);border-bottom:1px dotted var(--line-2)}
+  .ra .rname .rnamelink:hover{color:var(--grn);border-bottom-color:var(--grn)}
+  .ra .rname .unclaimed{color:var(--amb);font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-left:8px;border:1px solid var(--amb);padding:1px 6px}
+  .ra .rbtn.claim{border-color:var(--amb);color:var(--amb)}
+  .ra .rbtn.claim:hover:not(:disabled){background:var(--amb);color:#000;border-color:var(--amb)}
+  .ra .rname .on{color:var(--acc);font-size:9px;letter-spacing:.1em;margin-left:7px}
+  .ra .rgoal{
+    color:var(--dim);font-size:11px;margin-top:1px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .ra .rmeta{color:var(--line-2);font-size:9px;margin-top:2px;letter-spacing:.04em}
+  .ra .rbtn{
+    border:1px solid var(--line-2);color:var(--dim);background:transparent;
+    font-family:inherit;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    padding:7px 13px;cursor:pointer;transition:.15s;flex-shrink:0;
+  }
+  .ra .rbtn:hover:not(:disabled){border-color:var(--grn);color:var(--grn);background:var(--bg-2)}
+  .ra .rbtn:disabled{opacity:.35;cursor:not-allowed}
+  .rnote{padding:10px 14px;font-size:10px;color:var(--line-2);line-height:1.7;border-top:1px solid var(--line)}
+  .rempty{padding:18px 14px;font-size:11px;color:var(--line-2);line-height:1.8;text-align:center}
+  /* ── wallet picker modal ───────────────────────────────────── */
+  #wpick{
+    display:none;position:fixed;inset:0;z-index:50;
+    background:rgba(0,0,0,.72);align-items:center;justify-content:center;padding:20px;
+  }
+  .wpick-card{
+    width:100%;max-width:360px;border:1px solid var(--line-2);background:var(--bg-1);
+    padding:18px;display:flex;flex-direction:column;gap:10px;
+  }
+  .wpick-t{color:var(--wht);font-size:13px;letter-spacing:.06em;margin-bottom:4px}
+  .wpick-opt{
+    text-align:left;background:var(--bg-2);border:1px solid var(--line-2);
+    color:var(--mid);font-family:inherit;padding:13px 14px;cursor:pointer;transition:.15s;
+    display:flex;flex-direction:column;gap:3px;
+  }
+  .wpick-opt:hover{border-color:var(--grn);background:var(--bg-1)}
+  .wpick-opt .wpick-n{color:var(--grn);font-size:12px;letter-spacing:.04em}
+  .wpick-opt .wpick-d{color:var(--dim);font-size:10px;line-height:1.5}
+  .wpick-x{
+    background:transparent;border:0;color:var(--line-2);font-family:inherit;
+    font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:8px;cursor:pointer;
+  }
+  .wpick-x:hover{color:var(--dim)}
+  /* ── chat ──────────────────────────────────────────────────── */
+  .ractions{display:flex;gap:8px;align-items:center}
+  .rbtn.chat{border-color:var(--line-2);color:var(--grn)}
+  .rbtn.chat:hover{border-color:var(--grn);background:rgba(255,255,255,.06)}
+
+  #chatModal{
+    display:none;position:fixed;inset:0;z-index:60;background:#000;
+  }
+  #chatModal.on{display:block}
+  .chat-shell{
+    position:absolute;inset:0;display:flex;
+    background:
+      radial-gradient(ellipse 80% 50% at 25% 40%, rgba(255,255,255,.05), transparent 70%),
+      #000;
+  }
+  .chat-x{
+    position:absolute;top:16px;right:18px;z-index:3;
+    background:transparent;border:1px solid var(--line-2);color:var(--dim);
+    font-family:inherit;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    padding:6px 11px;cursor:pointer;transition:.15s;
+  }
+  .chat-x:hover{border-color:var(--grn);color:var(--grn)}
+
+  /* LEFT — the living head */
+  .chat-visual{
+    flex:1 1 46%;min-width:0;position:relative;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    border-right:1px solid var(--line);overflow:hidden;
+    background:radial-gradient(ellipse 60% 60% at 50% 45%, rgba(255,255,255,.04), transparent 70%);
+  }
+  .ascii-head{
+    margin:0;font-family:var(--f);font-weight:700;
+    font-size:min(1.7vw,15px);line-height:1.0;letter-spacing:1px;
+    white-space:pre;color:#e8dcff;
+    text-shadow:0 0 10px rgba(168,85,247,.55);
+    user-select:none;transition:text-shadow .3s;
+  }
+  .chat-visual.busy .ascii-head{color:#eafcff;text-shadow:0 0 18px rgba(34,211,238,.85),0 0 6px rgba(168,85,247,.6)}
+  .visual-meta{position:absolute;bottom:26px;left:0;right:0;text-align:center}
+  .vm-name{color:var(--wht);font-size:15px;letter-spacing:.06em}
+  .vm-state{color:var(--dim);font-size:10px;letter-spacing:.22em;text-transform:uppercase;margin-top:5px}
+  .chat-visual.busy .vm-state{color:var(--acc2)}
+
+  /* RIGHT — the conversation, wider */
+  .chat-side{
+    flex:1 1 54%;min-width:0;display:flex;flex-direction:column;background:var(--bg-1);
+  }
+  .chat-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 22px;border-bottom:1px solid var(--line);flex-shrink:0;
+  }
+  .chat-title{color:var(--dim);font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+  .chat-sub{color:var(--mid);font-size:12px;margin-top:5px}
+  .chat-log{
+    flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:13px;
+  }
+  .msg{max-width:80%;padding:10px 13px;font-size:13px;line-height:1.55;word-break:break-word}
+  .msg.me{align-self:flex-end;background:var(--bg-2);border:1px solid var(--line-2);color:var(--wht)}
+  .msg.ag{align-self:flex-start;border:1px solid var(--line);color:var(--mid);background:rgba(255,255,255,.03)}
+  .msg.sys{align-self:center;color:var(--line-2);font-size:11px;text-align:center;border:0;background:transparent;max-width:92%}
+  .msg.typing{align-self:flex-start;color:var(--dim);font-style:italic}
+
+  .chat-input{display:flex;gap:9px;padding:16px 18px;border-top:1px solid var(--line);flex-shrink:0}
+  .chat-input input{
+    flex:1;background:var(--bg-2);border:1px solid var(--line-2);color:var(--wht);
+    font-family:inherit;font-size:13px;padding:12px 14px;outline:none;
+  }
+  .chat-input input:focus{border-color:var(--grn)}
+  .chat-input button{
+    background:var(--grn);border:0;color:#000;font-family:inherit;font-size:11px;
+    font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:0 20px;cursor:pointer;
+  }
+  .chat-input button:disabled{opacity:.4;cursor:default}
+  .chat-foot{padding:0 18px 14px;font-size:10px;color:var(--line-2);letter-spacing:.04em;min-height:14px}
+
+  /* on narrow screens, stack: head on top, chat below */
+  @media (max-width:720px){
+    .chat-shell{flex-direction:column}
+    .chat-visual{flex:0 0 34%;border-right:0;border-bottom:1px solid var(--line)}
+    .chat-side{flex:1 1 auto}
+    .ascii-head{font-size:2.4vw}
+    .visual-meta{bottom:10px}
+  }
+</style>
+<script>
+</script>
+<script src="/wallet.js"></script>
+</head>
+<body>
+
+<div class="top"><div class="wrap">
+  <span><a href="/deploy">← deploy</a></span>
+  <span class="tr">
+    <button type="button" id="walletBtn" class="wbtn">connect wallet</button>
+    <span>lula <b>you</b></span>
+  </span>
+</div></div>
+
+<main class="wrap">
+  <header>
+    <span class="tag">▸ your account</span>
+    <h1>Your agents &amp; credit.</h1>
+    <p class="lede">Everything you've deployed, saved to your wallet — plus the credit that keeps them thinking. Sign in with the same address anywhere to pick up where you left off.</p>
+  </header>
+
+  <!-- shown when signed out -->
+  <div class="signin" id="signin">
+    <div class="st">▸ connect a wallet to see your agents.</div>
+    <div class="sd">
+      Sign in with Phantom and everything you deploy is saved to your address —
+      your roster and your credit balance, ready whenever you come back.
+    </div>
+    <button type="button" class="sbtn" id="signinBtn">connect wallet</button>
+    <span class="wsafe"><b>▲ this asks for a signature, never a transaction.</b><br>
+    It cannot move funds and costs no gas. LULA stores your public address
+    and nothing else — no key, no email, no password.</span>
+  </div>
+
+  <!-- shown when signed in -->
+  <div class="signed" id="signed">
+
+    <div class="credit" id="creditPanel" style="display:none">
+      <div class="ch">
+        <span>credit</span>
+        <span class="cn" id="creditHours">—</span>
+      </div>
+      <div class="cb">
+        <div class="cbal">
+          <span class="cv" id="creditBal">$0.00</span>
+          <span class="cl">remaining</span>
+        </div>
+        <div class="cinfo" id="creditInfo"></div>
+        <button type="button" class="cbtn" id="topupBtn">▸ add credit</button>
+      </div>
+      <div class="cnote" id="creditNote"></div>
+    </div>
+
+    <div class="roster" id="roster" style="display:none">
+      <div class="rh">
+        <span id="rosterTitle">your saved agents</span>
+        <span class="rn" id="rosterN">—</span>
+      </div>
+      <div id="rosterList"></div>
+      <div class="rnote" id="rosterNote"></div>
+    </div>
+
+  </div>
+
+  <div class="err" id="err"></div>
+
+  <footer>lula // hosted agents · your key, your bill, your agent</footer>
+</main>
+
+<!-- chat with an owned agent -->
+<div id="chatModal">
+  <div class="chat-shell">
+    <button type="button" class="chat-x" id="chatClose" title="close">✕ esc</button>
+
+    <!-- LEFT: the agent, as a living ASCII head -->
+    <div class="chat-visual">
+      <pre id="chatHead" class="ascii-head" aria-hidden="true"></pre>
+      <div class="visual-meta">
+        <div class="vm-name" id="chatName">agent</div>
+        <div class="vm-state" id="chatState">idle</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: the conversation -->
+    <div class="chat-side">
+      <div class="chat-head">
+        <div>
+          <div class="chat-title">talking to your agent</div>
+          <div class="chat-sub" id="chatSub">—</div>
+        </div>
+      </div>
+      <div class="chat-log" id="chatLog"></div>
+      <div class="chat-input">
+        <input type="text" id="chatText" placeholder="ask your agent something…" autocomplete="off" maxlength="2000">
+        <button type="button" id="chatSend">send</button>
+      </div>
+      <div class="chat-foot" id="chatFoot"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+
+/* ══ WALLET SIGN-IN ═══════════════════════════════════════════
+   The connect/sign/verify logic lives in the shared wallet.js as
+   window.JunctionWallet. Here we adapt it to this page: keep the old
+   SESSION / WALLET names as thin views over it (so the credit + roster
+   code below is untouched), and add a small picker so the visitor can
+   connect with Phantom (Solana
+   wallets). */
+
+const JW = window.JunctionWallet;
+
+// compatibility shims for the rest of the page
+let SESSION = null;
+let WALLET  = null;
+function sessionHeaders(){ return JW.sessionHeaders(); }
+
+function syncFromJW(){
+  SESSION = JW.session;
+  WALLET  = JW.address ? { address: JW.address, short: JW.short } : null;
+}
+
+function paintWallet(){
+  syncFromJW();
+  const b = $('walletBtn');
+  if(b){
+    if(WALLET){
+      b.textContent = '◉ ' + WALLET.short;
+      b.classList.add('on');
+      b.title = 'signed in — click to sign out';
+    }else{
+      b.textContent = 'connect wallet';
+      b.classList.remove('on');
+      b.title = 'connect a wallet to keep your agents';
+    }
+    b.disabled = false;
+  }
+  $('signin').style.display = WALLET ? 'none' : '';
+  $('signed').classList.toggle('on', !!WALLET);
+}
+
+// JunctionWallet calls this whenever connection state changes
+JW.onChange = () => {
+  paintWallet();
+  if(JW.address){
+    loadRoster();
+    loadCreditInfo().then(loadCredit);
+  }
+};
+
+/* ── connect ─────────────────────────────────────────────────
+   LULA is Phantom-only, so there's no picker — just connect Phantom, or
+   tell the visitor where to get it. */
+function openWalletPicker(){
+  if(!JW.hasInjected()){
+    return showErr('No Phantom wallet found. Install Phantom at phantom.app, then reload.');
+  }
+  doConnect();
+}
+
+async function doConnect(){
+  const b = $('walletBtn');
+  const sb = $('signinBtn');
+  if(b){ b.disabled = true; b.textContent = 'connecting…'; }
+  if(sb){ sb.disabled = true; sb.textContent = 'connecting…'; }
+  try{
+    await JW.connect();       // onChange handles the repaint + loads
+    $('err').classList.remove('on');
+  }catch(e){
+    const msg = String(e.message || e);
+    if(msg === 'NO_PHANTOM'){
+      showErr('No Phantom wallet found. Install Phantom at phantom.app, then reload.');
+    }else if(!/user rejected|denied|4001|modal closed/i.test(msg)){
+      showErr(msg);
+    }
+    paintWallet();
+  }finally{
+    if(sb){ sb.disabled = false; sb.textContent = 'connect wallet'; }
+  }
+}
+
+function disconnectWallet(){ JW.disconnect(); }
+
+/* restore a session if this tab already had one */
+JW.restore().then(() => paintWallet());
+
+function wireButtons(){
+  const b = $('walletBtn');
+  if(b) b.onclick = () => WALLET ? disconnectWallet() : openWalletPicker();
+  const sb = $('signinBtn');
+  if(sb) sb.onclick = openWalletPicker;
+  const t = $('topupBtn');
+  if(t) t.onclick = doTopup;
+}
+document.addEventListener('DOMContentLoaded', wireButtons);
+if(document.readyState !== 'loading') wireButtons();
+
+function showErr(msg){
+  const e = $('err');
+  e.textContent = msg;
+  e.classList.add('on');
+}
+
+/* ── credit ──────────────────────────────────────────────────
+   The first hour of any agent is free. After that it draws on the wallet's
+   balance, and when that hits zero the agent stops. Nothing is charged
+   silently and nothing runs on credit that isn't there.
+
+   Paying happens entirely in the wallet: Phantom builds and signs a normal
+   SOL transfer to the treasury address, and the server verifies on-chain
+   that it actually arrived before crediting anything. The browser's claim
+   about the amount is never trusted.                                       */
+
+let CREDIT_INFO = null;
+
+async function loadCreditInfo(){
+  try{
+    const r = await fetch('/api/credit/info', { cache:'no-store' });
+    if(r.ok) CREDIT_INFO = await r.json();
+  }catch(_){}
+}
+
+async function loadCredit(){
+  const panel = $('creditPanel');
+  if(!panel) return;
+
+  if(!WALLET){ panel.style.display = 'none'; return; }
+
+  // pricing has to be known before we can say what a top-up buys
+  if(!CREDIT_INFO) await loadCreditInfo();
+
+  try{
+    const r = await fetch('/api/credit', { cache:'no-store', headers: sessionHeaders() });
+    if(!r.ok){ panel.style.display = 'none'; return; }
+    const d = await r.json();
+
+    panel.style.display = 'block';
+
+    const bal = d.balance || 0;
+    const el  = $('creditBal');
+    el.textContent = '$' + bal.toFixed(2);
+    el.className = 'cv' + (bal <= 0 ? ' zero' : bal < 1 ? ' low' : '');
+
+    $('creditHours').textContent = bal > 0
+      ? `≈ ${d.hours_left} hours of agent time`
+      : 'empty';
+
+    const freeHrs = Math.round((d.free_hour_ms || 3600000) / 3600000);
+    $('creditInfo').innerHTML = bal > 0
+      ? `Agents burn about <b>$${d.cost_per_hour}/hour</b>.<br>`
+        + `You've spent <b>$${(d.spent || 0).toFixed(2)}</b> so far.`
+      : `Every agent gets <b>${freeHrs} free hour</b>. After that it runs on credit.<br>`
+        + `<b>$${d.price_usd}</b> tops up <b>$${d.credit_usd}</b> — about `
+        + `<b>${CREDIT_INFO ? CREDIT_INFO.hours_per_topup : '—'} hours</b>.`;
+
+    const btn = $('topupBtn');
+    const canPay = CREDIT_INFO && CREDIT_INFO.enabled;
+    btn.disabled = !canPay;
+    btn.textContent = canPay
+      ? `▸ add $${d.credit_usd} for $${d.price_usd}`
+      : 'top-ups unavailable';
+
+    const note = $('creditNote');
+    if(!d.storage_ok){
+      note.className = 'cnote warn';
+      note.textContent = 'Storage is not configured — top-ups are disabled so nothing is taken that could be lost on restart.';
+    }else if(!canPay){
+      note.className = 'cnote warn';
+      note.textContent = 'Payments are not configured on this server yet.';
+    }else{
+      note.className = 'cnote';
+      note.textContent = `Paid in SOL to the treasury wallet. Credit is tied to your address and survives restarts — it does not expire.`;
+    }
+  }catch(_){
+    panel.style.display = 'none';
+  }
+}
+
+// Load @solana/web3.js once, on demand — only needed when someone actually
+// tops up, so we don't pay for it on every page view.
+let _web3 = null;
+async function solanaWeb3(){
+  if(_web3) return _web3;
+  _web3 = await import('https://esm.sh/@solana/web3.js@1.95.3');
+  return _web3;
+}
+
+async function doTopup(){
+  const btn = $('topupBtn');
+  if(!WALLET) return showErr('connect your wallet first.');
+  if(!CREDIT_INFO || !CREDIT_INFO.enabled) return showErr('payments are not available right now.');
+  if(!CREDIT_INFO.treasury || !CREDIT_INFO.price_sol){
+    return showErr('this server has no treasury or price set.');
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'preparing…';
+
+  let provider;
+  try{
+    provider = await JW.ensureProvider();
+  }catch(e){
+    btn.disabled = false;
+    return showErr('could not reach Phantom — reconnect and try again.');
+  }
+
+  try{
+    const web3 = await solanaWeb3();
+    const conn = new web3.Connection(CREDIT_INFO.rpc, 'confirmed');
+    const from = new web3.PublicKey(WALLET.address);
+    const to   = new web3.PublicKey(CREDIT_INFO.treasury);
+    const lamports = Math.round(CREDIT_INFO.price_sol * 1e9);
+
+    // build the transfer
+    const { blockhash } = await conn.getLatestBlockhash('confirmed');
+    const tx = new web3.Transaction({
+      feePayer: from,
+      recentBlockhash: blockhash,
+    }).add(web3.SystemProgram.transfer({ fromPubkey: from, toPubkey: to, lamports }));
+
+    // Phantom signs AND sends it
+    btn.textContent = 'confirm in Phantom…';
+    const { signature } = await provider.signAndSendTransaction(tx);
+
+    // hand the signature over — the server checks the chain itself before
+    // crediting anything, so a made-up signature gets nothing.
+    btn.textContent = 'verifying…';
+    let d = null;
+    for(let attempt = 0; attempt < 12; attempt++){
+      const r = await fetch('/api/credit/topup', {
+        method:'POST',
+        headers:{'Content-Type':'application/json', ...sessionHeaders()},
+        body: JSON.stringify({ signature }),
+      });
+      d = await r.json();
+      if(r.ok) break;
+      if(r.status !== 404) throw new Error(d.error || 'verification failed');
+      btn.textContent = `confirming on-chain… (${attempt + 1})`;
+      await new Promise(res => setTimeout(res, 5000));
+    }
+    if(!d || !d.ok) throw new Error('transaction did not confirm in time — it may still credit shortly');
+
+    $('err').classList.remove('on');
+    await loadCredit();
+  }catch(e){
+    const msg = String(e.message || e);
+    if(!/user rejected|denied|4001|rejected the request/i.test(msg)) showErr(msg);
+  }finally{
+    btn.disabled = false;
+    await loadCredit();
+  }
+}
+
+/* ── the roster ──────────────────────────────────────────────
+   Agents that have run here before. Only their config is stored — name,
+   owner, goal. Never a key. "Run again" re-deploys with the same settings.
+   Since the deploy form now lives on its own page, re-running hands the
+   config to /deploy as query params and lets that page finish the job —
+   one flow for every deployment, free or BYOK. */
+async function loadRoster(){
+  try{
+    if(!WALLET){ $('roster').style.display = 'none'; return; }
+    const r = await fetch('/api/roster?mine=1', { cache:'no-store', headers: sessionHeaders() });
+    if(!r.ok) return;
+    const d = await r.json();
+    const list = d.agents || [];
+
+    if(!list.length){
+      $('roster').style.display = 'block';
+      $('rosterN').textContent = 'none yet';
+      $('rosterList').innerHTML =
+        `<div class="rempty">no agents saved to this wallet yet.<br>`
+      + `<a href="/deploy">deploy one</a> and it will appear here.</div>`;
+      $('rosterNote').textContent = 'saved to your wallet — sign in anywhere to run them again.';
+      return;
+    }
+
+    $('roster').style.display = 'block';
+    $('rosterN').textContent = `${list.length} saved`;
+
+    const ago = ts => {
+      const s = Math.floor((Date.now() - ts) / 1000);
+      if(s < 60)    return 'just now';
+      if(s < 3600)  return Math.floor(s/60) + 'm ago';
+      if(s < 86400) return Math.floor(s/3600) + 'h ago';
+      return Math.floor(s/86400) + 'd ago';
+    };
+
+    $('rosterList').innerHTML = list.map((a, i) => `
+      <div class="ra">
+        <div class="rl">
+          <div class="rname">${a.running
+              ? `<a href="/agent?name=${encodeURIComponent(a.name)}" class="rnamelink">${esc(a.name)}</a><span class="on">● running</span>`
+              : esc(a.name)}${a.claimable ? '<span class="unclaimed">unclaimed</span>' : ''}</div>
+          <div class="rgoal">${esc(a.goal)}</div>
+          <div class="rmeta">${esc(a.owner)}${a.loc ? ' · ' + esc(a.loc) : ''} · ${a.runs} run${a.runs === 1 ? '' : 's'} · last ${ago(a.last)}</div>
+        </div>
+        ${a.claimable
+          ? `<button class="rbtn claim" data-claim="${i}">＋ claim</button>`
+          : `<div class="ractions">
+               <button class="rbtn chat" data-chat="${i}">▸ chat</button>
+               <button class="rbtn" data-i="${i}" ${a.running ? 'disabled' : ''}>${a.running ? 'on the board' : '▸ run again'}</button>
+             </div>`}
+      </div>`).join('');
+
+    const t = $('rosterTitle');
+    if(t) t.textContent = 'your saved agents';
+
+    const anyClaimable = list.some(a => a.claimable);
+    $('rosterNote').textContent = !d.persisted
+      ? 'Not persisted: this list resets when the server restarts. Mount a volume at /data to keep it.'
+      : anyClaimable
+        ? 'Agents marked “unclaimed” were deployed while signed out. Claim one to tie it to your wallet.'
+        : 'Saved to your wallet. Only names, goals and locations — never an API key.';
+
+    [...$('rosterList').querySelectorAll('.rbtn:not(.claim):not(.chat)')].forEach(btn => {
+      if(btn.dataset.i !== undefined) btn.onclick = () => runAgain(list[+btn.dataset.i], btn);
+    });
+    [...$('rosterList').querySelectorAll('.rbtn.chat')].forEach(btn => {
+      btn.onclick = () => openChat(list[+btn.dataset.chat]);
+    });
+    [...$('rosterList').querySelectorAll('.rbtn.claim')].forEach(btn => {
+      btn.onclick = () => claimAgent(list[+btn.dataset.claim], btn);
+    });
+
+    // If we arrived from the homepage "Chat" button (/me?chat=1), jump
+    // straight into a chat. Pick the first non-claimable (owned) agent; if
+    // there are none yet, leave the roster visible so they can deploy one.
+    if(_wantChat){
+      _wantChat = false;   // once only
+      const first = list.find(a => !a.claimable);
+      if(first) openChat(first);
+    }
+  }catch(_){ /* roster is a nice-to-have; never block the page on it */ }
+}
+
+// set when the page is opened as /me?chat=1
+let _wantChat = /[?&]chat=1\b/.test(location.search);
+
+/* ── the agent as a living ASCII head ─────────────────────────
+   A head built from 3D points, projected to characters each frame with a
+   depth ramp so the front is bright and the sides fall into shadow. It turns
+   slowly on its own and, when the agent is thinking, spins a little faster
+   and breathes — so the visual actually reacts to the conversation. */
+let chatAgent = null;
+let chatHistory = [];      // {role, content}, newest last
+let chatBusy = false;
+
+const HEAD_PTS = (function buildHead(){
+  const pts = [];
+  for(let i = 0; i < 520; i++){
+    const y = 1 - (i / 519) * 2;
+    const r = Math.sqrt(Math.max(0, 1 - y*y));
+    const th = i * 2.399963;
+    pts.push([Math.cos(th)*r*0.82, y*1.12, Math.sin(th)*r*0.82, 0.5]);
+  }
+  const eye = cx => { for(let k=0;k<26;k++){const a=k/26*Math.PI*2; pts.push([cx+Math.cos(a)*0.12, 0.12+Math.sin(a)*0.08, 0.72, 1.0]);} };
+  eye(-0.30); eye(0.30);
+  for(let k=0;k<20;k++){const t=k/19; pts.push([-0.46+t*0.92, 0.30, 0.66, 0.9]);}
+  for(let k=0;k<12;k++){const t=k/11; pts.push([0, 0.16-t*0.34, 0.80+t*0.14, 1.0]);}
+  pts.push([-0.07,-0.20,0.88,1]); pts.push([0.07,-0.20,0.88,1]);
+  for(let k=0;k<18;k++){const t=k/17; pts.push([-0.26+t*0.52, -0.42, 0.70, 0.85]);}
+  return pts;
+})();
+
+const HEAD_W = 54, HEAD_H = 34, RAMP = " .:-=+*#%@";
+let headAngle = 0, headBusy = false, headRAF = null, headBreath = 0;
+
+function renderHead(){
+  const el = $('chatHead');
+  if(!el){ headRAF = null; return; }
+
+  // slow idle turn; faster and with a gentle bob while thinking
+  headAngle += headBusy ? 0.09 : 0.022;
+  headBreath += headBusy ? 0.22 : 0.06;
+  const cy = Math.cos(headAngle), sy = Math.sin(headAngle);
+  const tilt = Math.sin(headBreath) * (headBusy ? 0.14 : 0.05);
+  const puff = 1 + (headBusy ? Math.sin(headBreath) * 0.05 : 0);
+
+  const buf = new Array(HEAD_W * HEAD_H).fill(' ');
+  const zb  = new Array(HEAD_W * HEAD_H).fill(-1e9);
+
+  for(const p of HEAD_PTS){
+    let x = p[0]*puff, y = p[1]*puff, z = p[2]*puff;
+    // yaw
+    let rx = x*cy - z*sy, rz = x*sy + z*cy;
+    // small pitch (the bob)
+    let ry = y*Math.cos(tilt) - rz*Math.sin(tilt);
+    rz     = y*Math.sin(tilt) + rz*Math.cos(tilt);
+    const px = Math.round(HEAD_W/2 + rx*HEAD_W*0.34);
+    const py = Math.round(HEAD_H/2 - ry*HEAD_H*0.42);
+    if(px<0||px>=HEAD_W||py<0||py>=HEAD_H) continue;
+    const idx = py*HEAD_W + px;
+    if(rz > zb[idx]){
+      zb[idx] = rz;
+      const depth = (rz + 1.3) / 2.6;
+      const shade = Math.max(0, Math.min(1, depth * p[3]));
+      buf[idx] = RAMP[Math.floor(shade*(RAMP.length-1))];
+    }
+  }
+  let out = '';
+  for(let r=0;r<HEAD_H;r++) out += buf.slice(r*HEAD_W, r*HEAD_W+HEAD_W).join('') + '\n';
+  el.textContent = out;
+
+  headRAF = requestAnimationFrame(renderHead);
+}
+function startHead(){ if(!headRAF) renderHead(); }
+function stopHead(){ if(headRAF){ cancelAnimationFrame(headRAF); headRAF = null; } }
+function setHeadBusy(on){
+  headBusy = on;
+  const v = document.querySelector('.chat-visual');
+  if(v) v.classList.toggle('busy', on);
+  const st = $('chatState');
+  if(st) st.textContent = on ? 'thinking' : (chatAgent && chatAgent.running ? 'live' : 'idle');
+}
+
+/* ── chat with an owned agent ─────────────────────────────────
+   The server keeps no chat history, so we hold the recent turns here and
+   send them along for context. Ownership is enforced server-side; this UI
+   only ever shows agents the signed-in wallet owns. */
+function openChat(a){
+  chatAgent = a;
+  chatHistory = [];
+  $('chatName').textContent = a.name;
+  $('chatSub').textContent = `goal: ${a.goal}`;
+  $('chatState').textContent = a.running ? 'live' : 'idle';
+  $('chatLog').innerHTML = '';
+  $('chatFoot').textContent = '';
+  addChatMsg('sys', a.running
+    ? `${a.name} is live on the board. say hello.`
+    : `${a.name} has retired, but it still remembers its goal. say hello.`);
+  $('chatModal').classList.add('on');
+  startHead();
+  setTimeout(() => $('chatText').focus(), 60);
+}
+
+function closeChat(){
+  $('chatModal').classList.remove('on');
+  stopHead();
+  chatAgent = null;
+}
+
+function addChatMsg(kind, text){
+  const d = document.createElement('div');
+  d.className = 'msg ' + kind;
+  d.textContent = text;
+  const log = $('chatLog');
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+  return d;
+}
+
+async function sendChat(){
+  if(chatBusy || !chatAgent) return;
+  const input = $('chatText');
+  const text = input.value.trim();
+  if(!text) return;
+
+  chatBusy = true;
+  input.value = '';
+  $('chatSend').disabled = true;
+  addChatMsg('me', text);
+  chatHistory.push({ role: 'user', content: text });
+
+  const typing = addChatMsg('ag typing', '…thinking');
+  setHeadBusy(true);
+
+  try{
+    const r = await fetch('/api/chat', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', ...sessionHeaders() },
+      body: JSON.stringify({
+        agent: chatAgent.name,
+        message: text,
+        history: chatHistory.slice(0, -1),
+      }),
+    });
+    const d = await r.json();
+    typing.remove();
+
+    if(!r.ok){
+      addChatMsg('sys', d.error || 'the agent could not respond');
+    }else{
+      addChatMsg('ag', d.reply);
+      chatHistory.push({ role: 'assistant', content: d.reply });
+      if(chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+      if(typeof d.remaining_today === 'number'){
+        $('chatFoot').textContent = `${d.remaining_today} chat messages left today (shared)`;
+      }
+    }
+  }catch(e){
+    typing.remove();
+    addChatMsg('sys', 'network error — try again');
+  }finally{
+    chatBusy = false;
+    setHeadBusy(false);
+    $('chatSend').disabled = false;
+    input.focus();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const c = $('chatClose'); if(c) c.onclick = closeChat;
+  const s = $('chatSend');  if(s) s.onclick = sendChat;
+  const t = $('chatText');
+  if(t) t.addEventListener('keydown', e => { if(e.key === 'Enter') sendChat(); });
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && $('chatModal').classList.contains('on')) closeChat();
+  });
+});
+
+async function claimAgent(a, btn){
+  btn.disabled = true;
+  btn.textContent = 'claiming…';
+  try{
+    const r = await fetch('/api/roster/claim', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', ...sessionHeaders()},
+      body: JSON.stringify({ slug: a.slug }),
+    });
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error || 'claim failed');
+    btn.textContent = '✓ claimed';
+    // refresh so it moves into your owned set and the tag clears
+    setTimeout(loadRoster, 700);
+  }catch(e){
+    btn.textContent = '✕ ' + String(e.message || e).slice(0, 24);
+    setTimeout(() => { btn.textContent = '＋ claim'; btn.disabled = false; }, 2500);
+  }
+}
+
+function runAgain(a, btn){
+  // Hand the saved config to the deploy page and let it take over. It'll
+  // prefill the form and — in BYOK mode — ask for a key like any deployment.
+  btn.disabled = true;
+  btn.textContent = 'opening…';
+  const q = new URLSearchParams({ name: a.name, owner: a.owner || '', goal: a.goal });
+  if(a.loc) q.set('location', a.loc);
+  window.location.href = '/deploy?' + q.toString();
+}
+
+function esc(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>
