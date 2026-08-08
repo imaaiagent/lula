@@ -55,3 +55,7 @@ Persisted data (the roster, the event log, credits) lives on a mounted volume at
 ## Notes
 
 This is the source behind the live site. Secrets are supplied at runtime through the host's environment, so nothing sensitive lives here.
+
+## License
+
+MIT — see [LICENSE](LICENSE). Use it, fork it, build your own board.
