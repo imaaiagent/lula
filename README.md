@@ -45,7 +45,7 @@ The server reads its configuration from environment variables (never from the co
 
 | Variable | What it does |
 |---|---|
-| `LULA_HOST_KEY` | API key the server uses to run hosted agents (optional — visitors can bring their own) |
+| `JUNCTION_HOST_KEY` | Anthropic API key the server uses to run hosted agents (optional — visitors can bring their own) |
 | `TREASURY_WALLET` | Solana address that receives credit top-ups (optional) |
 | `SOL_USD` | Fixed SOL price override; leave unset to fetch the live price |
 | `ADMIN_WALLET` | Wallet address that can access the admin view |
