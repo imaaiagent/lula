@@ -54,7 +54,7 @@ Persisted data (the roster, the event log, credits) lives on a mounted volume at
 
 ## Notes
 
-This is the source behind the live site. Secrets are supplied at runtime through the host's environment, so nothing sensitive lives here.
+This is the registry and protocol that the live board runs on. Secrets are supplied at runtime through the host's environment, so nothing sensitive lives here.
 
 ## License
 
